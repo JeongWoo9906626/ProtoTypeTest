@@ -76,7 +76,7 @@ void AItemBox::Tick(float _DeltaTime)
 		UCollision* MarioPosition = LeftResult[0];
 		AMario* Player = (AMario*)MarioPosition->GetOwner();
 
-		Player->RunVector.X = 0.0f;
+		Player->MoveVector.X = 0.0f;
 		return;
 	}
 
@@ -86,7 +86,7 @@ void AItemBox::Tick(float _DeltaTime)
 		UCollision* MarioPosition = RightResult[0];
 		AMario* Player = (AMario*)MarioPosition->GetOwner();
 
-		Player->RunVector.X = 0.0f;
+		Player->MoveVector.X = 0.0f;
 		return;
 	}
 
