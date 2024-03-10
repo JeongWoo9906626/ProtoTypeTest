@@ -138,7 +138,19 @@ void AMario::Tick(float _DeltaTime)
 	UEngineDebug::DebugTextPrint("X : " + std::to_string(PlayerPos.X) + ", Y : " + std::to_string(PlayerPos.Y), 30.0f);
 	UEngineDebug::DebugTextPrint("\nDeltaTime : " + std::to_string(_DeltaTime), 30.0f);
 
-	
+	if (true == IsChange)
+	{
+		if (CurNoCollisionTime >= NoCollisionTime)
+		{
+			Renderer->SetAlpha(1.0f);
+			BodyCollision->ActiveOn();
+			BottomCollision->ActiveOn();
+			HeadCollision->ActiveOn();
+			IsChange = false;
+		}
+		CurNoCollisionTime += _DeltaTime;
+	}
+
 	std::vector<UCollision*> HiddenGateInResult;
 	if (true == BottomCollision->CollisionCheck(ECollisionOrder::Gate, HiddenGateInResult))
 	{
@@ -397,6 +409,7 @@ void AMario::IdleStart()
 	}
 
 	DirCheck();
+	SizeState = UContentsHelper::MSizeState;
 	Renderer->ChangeAnimation(GetAnimationName("Idle"));
 }
 
@@ -708,6 +721,7 @@ void AMario::FreeMove(float _DeltaTime)
 
 void AMario::Idle(float _DeltaTime)
 {
+	GroundUp();
 	MoveUpdate(_DeltaTime);
 
 	if (true == UEngineInput::IsDown('1'))
@@ -743,6 +757,7 @@ void AMario::Idle(float _DeltaTime)
 
 void AMario::Move(float _DeltaTime)
 {
+	GroundUp();
 	if (
 			(true == UEngineInput::IsFree(VK_RIGHT) && true == UEngineInput::IsFree(VK_LEFT)) ||
 			(true == UEngineInput::IsPress(VK_RIGHT) && true == UEngineInput::IsPress(VK_LEFT))
@@ -1025,6 +1040,7 @@ void AMario::HiddenStageOut(float _DeltaTime)
 
 void AMario::HiddenStageOutUp(float _DeltaTime)
 {
+	//GroundUp();
 	if (CurPortalTime < PortalTime)
 	{
 		AddActorLocation(FVector::Up * _DeltaTime * 50.0f);
@@ -1032,6 +1048,7 @@ void AMario::HiddenStageOutUp(float _DeltaTime)
 	}
 	else
 	{
+		GroundUp();
 		StateChange(EPlayState::Idle);
 		return;
 	}
@@ -1039,6 +1056,7 @@ void AMario::HiddenStageOutUp(float _DeltaTime)
 
 void AMario::FinishMove(float _DeltaTime)
 {
+	GroundUp();
 	Color8Bit Color = UContentsHelper::MapColImage->GetColor(GetActorLocation().iX(), GetActorLocation().iY(), Color8Bit::MagentaA);
 	if (Color == Color8Bit(255, 0, 255, 0))
 	{
@@ -1075,7 +1093,7 @@ void AMario::MoveUpdate(float _DeltaTime)
 {
 	FVector MarioPos = GetActorLocation();
 	Color8Bit CurPosColor = UContentsHelper::MapColImage->GetColor(MarioPos.iX(), MarioPos.iY(), Color8Bit::MagentaA);
-	if (CurPosColor != Color8Bit::MagentaA)
+	if (CurPosColor != Color8Bit::MagentaA && false == IsCollision)
 	{
 		GravityVector += FVector::Down * GravityAcc * _DeltaTime;
 	}
@@ -1107,5 +1125,26 @@ void AMario::MoveUpdate(float _DeltaTime)
 
 	TotalForceVector = MoveVector + JumpVector + GravityVector;
 	AddActorLocation(TotalForceVector * _DeltaTime);
+}
+
+void AMario::GroundUp()
+{
+	if (false == IsStageEnd)
+	{
+		while (true)
+		{
+			FVector Location = GetActorLocation();
+			Location.Y -= 1.0f;
+			Color8Bit Color = UContentsHelper::MapColImage->GetColor(Location.iX(), Location.iY(), Color8Bit::MagentaA);
+			if (Color == Color8Bit(255, 0, 255, 0))
+			{
+				AddActorLocation(FVector::Up);
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
 }
 

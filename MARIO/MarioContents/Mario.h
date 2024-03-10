@@ -98,8 +98,8 @@ private:
 	UCollision* BottomCollision = nullptr;
 
 	EPlayState State = EPlayState::None;
-	EMarioSizeState SizeState = EMarioSizeState::None;
-	EActorDir DirState = EActorDir::Left;
+	EMarioSizeState SizeState = EMarioSizeState::Small;
+	EActorDir DirState = EActorDir::Right;
 
 	float FreeMoveSpeed = 1000.0f;
 
@@ -142,6 +142,10 @@ private:
 	float DownTime = 1.0f;
 	float CurDownTime = 0.0f;
 
+	float CurNoCollisionTime = 0.0f;
+	float NoCollisionTime = 2.0f;
+
 	void MoveUpdate(float _DeltaTime);
+	void GroundUp();
 };
 
