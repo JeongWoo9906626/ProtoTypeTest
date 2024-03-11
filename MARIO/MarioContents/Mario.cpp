@@ -75,14 +75,14 @@ void AMario::BeginPlay()
 		Renderer->CreateAnimation("MoveFast_Big_Left", "Mario_Left.png", 10, 12, 0.05f, true);
 		Renderer->CreateAnimation("Reverse_Big_Left", "Mario_Left.png", 13, 13, 0.1f, true);
 		Renderer->CreateAnimation("Jump_Big_Left", "Mario_Left.png", 14, 14, 0.1f, true);
-		Renderer->CreateAnimation("Crouch_Big_Left", "Mario_Right.png", 15, 15, 0.1f, true);
+		Renderer->CreateAnimation("Crouch_Big_Left", "Mario_Left.png", 15, 15, 0.1f, true);
 
 		Renderer->CreateAnimation("Idle_Fire_Left", "Mario_Left.png", 20, 20, 0.1f, true);
 		Renderer->CreateAnimation("Move_Fire_Left", "Mario_Left.png", 21, 23, 0.1f, true);
 		Renderer->CreateAnimation("MoveFast_Fire_Left", "Mario_Left.png", 21, 23, 0.05f, true);
 		Renderer->CreateAnimation("Reverse_Fire_Left", "Mario_Left.png", 24, 24, 0.1f, true);
 		Renderer->CreateAnimation("Jump_Fire_Left", "Mario_Left.png", 25, 25, 0.1f, true);
-		Renderer->CreateAnimation("Crouch_Fire_Left", "Mario_Right.png", 26, 26, 0.1f, true);
+		Renderer->CreateAnimation("Crouch_Fire_Left", "Mario_Left.png", 26, 26, 0.1f, true);
 
 		Renderer->CreateAnimation("Die", "Mario_Left.png", 6, 6, 0.1f, true);
 		Renderer->CreateAnimation("Down_Small", "Mario_Right.png", 7, 8, 0.1f, true);
@@ -399,15 +399,17 @@ std::string AMario::GetAnimationName(std::string _Name)
 			break;
 		}
 	}
-
-	switch (DirState)
+	else
 	{
-	case EActorDir::Left:
-		AnimationDir = "_Left";
-		break;
-	case EActorDir::Right:
-		AnimationDir = "_Right";
-		break;
+		switch (DirState)
+		{
+		case EActorDir::Left:
+			AnimationDir = "_Left";
+			break;
+		case EActorDir::Right:
+			AnimationDir = "_Right";
+			break;
+		}
 	}
 
 	return _Name + SizeName + AnimationDir;
@@ -871,7 +873,7 @@ void AMario::Move(float _DeltaTime)
 {
 	GroundUp();
 	
-	if (abs(MoveVector.X) > 10.0f && true == UEngineInput::IsDown(VK_DOWN))
+	if (EMarioSizeState::Small != SizeState && abs(MoveVector.X) > 10.0f && true == UEngineInput::IsDown(VK_DOWN))
 	{
 		StateChange(EPlayState::CrouchMove);
 		return;
@@ -1098,14 +1100,34 @@ void AMario::Reverse(float _DeltaTime)
 {
 	FVector MoveDirVector = FVector::Zero;
 
+	if (true == UEngineInput::IsDown(VK_SPACE))
+	{
+		StateChange(EPlayState::Jump);
+		return;
+	}
+
 	switch (DirState)
 	{
 	case EActorDir::Left:
+	{
 		MoveDirVector = FVector::Left;
+		if (true == UEngineInput::IsPress(VK_RIGHT))
+		{
+			StateChange(EPlayState::Move);
+			return;
+		}
 		break;
+	}
 	case EActorDir::Right:
+	{
 		MoveDirVector = FVector::Right;
+		if (true == UEngineInput::IsPress(VK_LEFT))
+		{
+			StateChange(EPlayState::Move);
+			return;
+		}
 		break;
+	}
 	}
 
 	if (abs(MoveVector.X) < 5.0f)

@@ -46,7 +46,7 @@ void UPlayLevel::BeginPlay()
 	Flag->SetActorLocation({ 705, 700 });
 	Flag->SetActorLocation({ 12705, 700 });
 
-	AGoomba* Goomba = SpawnActor<AGoomba>(ERenderOrder::Monster);
+	/*AGoomba* Goomba = SpawnActor<AGoomba>(ERenderOrder::Monster);
 	Goomba->SetName("OpenWorldGoomba1");
 	Goomba->SetActorLocation({ 750, 600 });
 	AGoomba* Goomba2 = SpawnActor<AGoomba>(ERenderOrder::Monster);
@@ -58,7 +58,7 @@ void UPlayLevel::BeginPlay()
 	Turtle->SetActorLocation({ 1600, 700 });
 	ATroopa* Turtle2 = SpawnActor<ATroopa>(ERenderOrder::Monster);
 	Turtle2->SetName("OpenWorldTroopa2");
-	Turtle2->SetActorLocation({ 1000, 700 });
+	Turtle2->SetActorLocation({ 1000, 700 });*/
 
 	APlant* Plant = SpawnActor<APlant>(ERenderOrder::Plant);
 	Plant->SetName("Plant");
