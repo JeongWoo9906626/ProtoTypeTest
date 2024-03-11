@@ -118,7 +118,7 @@ void AMario::BeginPlay()
 		HeadCollision = CreateCollision(ECollisionOrder::PlayerHead);
 		HeadCollision->SetColType(ECollisionType::Rect);
 		HeadCollision->SetPosition({ 0, -62 });
-		HeadCollision->SetScale({ 10, 10 });
+		HeadCollision->SetScale({ 40, 10 });
 	}
 
 	{
@@ -442,7 +442,7 @@ void AMario::IdleStart()
 		BodyCollision->SetPosition({ 0, -35 });
 		BodyCollision->SetScale({ 50, 64 });
 		HeadCollision->SetPosition({ 0, -62 });
-		HeadCollision->SetScale({ 10, 10 });
+		//HeadCollision->SetScale({ 10, 10 });
 		BottomCollision->SetPosition({ 0, -5 });
 		BottomCollision->SetScale({ 10, 10 });
 		break;
@@ -453,7 +453,7 @@ void AMario::IdleStart()
 		BodyCollision->SetPosition({ 0, -70 });
 		BodyCollision->SetScale({ 50, 130 });
 		HeadCollision->SetPosition({ 0, -130 });
-		HeadCollision->SetScale({ 10, 10 });
+		//HeadCollision->SetScale({ 10, 10 });
 		BottomCollision->SetPosition({ 0, -5 });
 		BottomCollision->SetScale({ 10, 10 });
 		break;
@@ -496,7 +496,7 @@ void AMario::CrouchStart()
 	BodyCollision->SetPosition({ 0, -45 });
 	BodyCollision->SetScale({ 50, 80 });
 	HeadCollision->SetPosition({ 0, -82 });
-	HeadCollision->SetScale({ 10, 10 });
+	//HeadCollision->SetScale({ 10, 10 });
 	Renderer->ChangeAnimation(GetAnimationName("Crouch"));
 }
 
@@ -592,20 +592,20 @@ void AMario::ChangeRedStart()
 		break;
 	}
 
-	{
-		BodyCollision->SetPosition({ 0, -70 });
-		BodyCollision->SetScale({ 50, 130 });
-	}
+	//{
+	//	BodyCollision->SetPosition({ 0, -70 });
+	//	BodyCollision->SetScale({ 50, 130 });
+	//}
 
-	{
-		HeadCollision->SetPosition({ 0, -130 });
-		HeadCollision->SetScale({ 10, 10 });
-	}
+	//{
+	//	HeadCollision->SetPosition({ 0, -130 });
+	//	//HeadCollision->SetScale({ 10, 10 });
+	//}
 
-	{
-		BottomCollision->SetPosition({ 0, -5 });
-		BottomCollision->SetScale({ 10, 10 });
-	}
+	//{
+	//	BottomCollision->SetPosition({ 0, -5 });
+	//	BottomCollision->SetScale({ 10, 10 });
+	//}
 
 	Renderer->ChangeAnimation("ChangeRed" + DirName);
 }

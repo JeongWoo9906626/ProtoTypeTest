@@ -27,7 +27,7 @@ void ASunflower::BeginPlay()
 		BodyCollision = CreateCollision(ECollisionOrder::Goomba);
 		BodyCollision->SetColType(ECollisionType::Rect);
 		BodyCollision->SetPosition({ 0, -30 });
-		BodyCollision->SetScale({ 55, 55 });
+		BodyCollision->SetScale({ 30, 55 });
 	}
 
 	{
