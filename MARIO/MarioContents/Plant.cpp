@@ -40,21 +40,25 @@ void APlant::Tick(float _DeltaTime)
 {
 	AActor::Tick(_DeltaTime);
 
+
 	std::vector<UCollision*> MarioResult;
 	if (true == BodyCollision->CollisionCheck(ECollisionOrder::Player, MarioResult))
 	{
 		UCollision* MarioCollision = MarioResult[0];
 		AMario* Mario = (AMario*)MarioCollision->GetOwner();
-		if (Mario->SizeState != EMarioSizeState::Small)
+		if (false == Mario->IsChange)
 		{
-			Mario->SizeState = EMarioSizeState::Small;
-			Mario->StateChange(EPlayState::GrowDown);
-			return;
-		}
-		else
-		{
-			Mario->StateChange(EPlayState::Die);
-			return;
+			if (Mario->SizeState != EMarioSizeState::Small)
+			{
+				Mario->SizeState = EMarioSizeState::Small;
+				Mario->StateChange(EPlayState::GrowDown);
+				return;
+			}
+			else
+			{
+				Mario->StateChange(EPlayState::Die);
+				return;
+			}
 		}
 	}
 

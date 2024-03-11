@@ -54,6 +54,7 @@ enum class EPlayState
 	Idle,
 	Move,
 	Jump,
+	Crouch,
 	Reverse,
 	Kill,
 	Die,

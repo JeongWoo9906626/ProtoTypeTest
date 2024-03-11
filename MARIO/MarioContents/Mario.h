@@ -60,6 +60,7 @@ protected:
 	void IdleStart();
 	void MoveStart();
 	void JumpStart();
+	void CrouchStart();
 	void ReverseStart();
 	void KillStart();
 	void DieStart();
@@ -78,6 +79,7 @@ protected:
 	void Idle(float _DeltaTime);
 	void Move(float _DeltaTime);
 	void Jump(float _DeltaTime);
+	void Crouch(float _DeltaTime);
 	void Reverse(float _DeltaTime);
 	void Kill(float _DeltaTime);
 	void Die(float _DeltaTime);
@@ -106,8 +108,12 @@ private:
 	bool IsHiddenStage = false;
 	bool IsChange = false;
 	bool IsJump = false;
+	bool IsGround = false;
+	bool IsDown = false;
+	bool IsMove = true;
 	bool IsCollision = false;
 	bool IsStageEnd = false;
+	bool IsInvincibility = false;
 
 	FVector MoveVector = FVector::Zero;
 	float MoveAcc = 400.0f;
