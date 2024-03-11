@@ -324,6 +324,11 @@ void AMario::StateUpdate(float _DeltaTime)
 
 void AMario::DirCheck()
 {
+	if (true == UEngineInput::IsFree(VK_RIGHT) && true == UEngineInput::IsFree(VK_LEFT))
+	{
+		DirState;
+		return;
+	}
 	if (true == UEngineInput::IsPress(VK_RIGHT) && true == UEngineInput::IsPress(VK_LEFT))
 	{
 		return;
@@ -366,16 +371,6 @@ std::string AMario::GetAnimationName(std::string _Name)
 		break;
 	}
 
-	switch (DirState)
-	{
-	case EActorDir::Left:
-		AnimationDir = "_Left";
-		break;
-	case EActorDir::Right:
-		AnimationDir = "_Right";
-		break;
-	}
-
 	if (EPlayState::Reverse == State)
 	{
 		switch (DirState)
@@ -387,6 +382,16 @@ std::string AMario::GetAnimationName(std::string _Name)
 			AnimationDir = "_Left";
 			break;
 		}
+	}
+
+	switch (DirState)
+	{
+	case EActorDir::Left:
+		AnimationDir = "_Left";
+		break;
+	case EActorDir::Right:
+		AnimationDir = "_Right";
+		break;
 	}
 
 	return _Name + SizeName + AnimationDir;
