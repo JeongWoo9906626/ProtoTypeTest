@@ -856,7 +856,7 @@ void AMario::Idle(float _DeltaTime)
 		return;
 	}
 
-	if (true == UEngineInput::IsDown(VK_SPACE))
+	if (true == UEngineInput::IsDown(VK_SPACE) && GravityVector.Y == 0.0f)
 	{
 		StateChange(EPlayState::Jump);
 		return;
@@ -879,7 +879,7 @@ void AMario::Move(float _DeltaTime)
 		return;
 	}
 
-	if (true == UEngineInput::IsDown(VK_SPACE))
+	if (true == UEngineInput::IsDown(VK_SPACE) && GravityVector.Y == 0.0f)
 	{
 		StateChange(EPlayState::Jump);
 		return;
@@ -1030,7 +1030,7 @@ void AMario::Crouch(float _DeltaTime)
 		return;
 	}
 	
-	if (true == UEngineInput::IsDown(VK_SPACE))
+	if (true == UEngineInput::IsDown(VK_SPACE) && GravityVector.Y == 0.0f)
 	{
 		IsMove = false;
 		StateChange(EPlayState::Jump);
@@ -1100,7 +1100,7 @@ void AMario::Reverse(float _DeltaTime)
 {
 	FVector MoveDirVector = FVector::Zero;
 
-	if (true == UEngineInput::IsDown(VK_SPACE))
+	if (true == UEngineInput::IsDown(VK_SPACE) && GravityVector.Y == 0.0f)
 	{
 		StateChange(EPlayState::Jump);
 		return;
