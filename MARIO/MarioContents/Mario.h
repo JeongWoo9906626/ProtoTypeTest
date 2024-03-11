@@ -147,5 +147,6 @@ private:
 
 	void MoveUpdate(float _DeltaTime);
 	void GroundUp();
+	void WallUp();
 };
 

@@ -409,6 +409,7 @@ void AMario::IdleStart()
 	}
 
 	DirCheck();
+	MoveVector = FVector::Zero;
 	SizeState = UContentsHelper::MSizeState;
 	Renderer->ChangeAnimation(GetAnimationName("Idle"));
 }
@@ -566,6 +567,7 @@ void AMario::HiddenStageEnterStart()
 	IsHiddenStage = true;
 	CurPortalTime = 0.0f;
 	CurScreenChangeTime = 0.0f;
+	MoveVector = FVector::Zero;
 
 	Renderer->ChangeAnimation(GetAnimationName("Idle"));
 	SetActorLocation(UContentsHelper::PortalPos1);
@@ -758,6 +760,13 @@ void AMario::Idle(float _DeltaTime)
 void AMario::Move(float _DeltaTime)
 {
 	GroundUp();
+	
+	if (true == UEngineInput::IsDown(VK_SPACE))
+	{
+		StateChange(EPlayState::Jump);
+		return;
+	}
+
 	if (
 			(true == UEngineInput::IsFree(VK_RIGHT) && true == UEngineInput::IsFree(VK_LEFT)) ||
 			(true == UEngineInput::IsPress(VK_RIGHT) && true == UEngineInput::IsPress(VK_LEFT))
@@ -786,12 +795,6 @@ void AMario::Move(float _DeltaTime)
 			StateChange(EPlayState::Idle);
 			return;
 		}
-	}
-
-	if (true == UEngineInput::IsDown(VK_SPACE))
-	{
-		StateChange(EPlayState::Jump);
-		return;
 	}
 
 	if (true == UEngineInput::IsPress(VK_RIGHT))
@@ -1091,9 +1094,11 @@ void AMario::FinishWalk(float _DeltaTime)
 
 void AMario::MoveUpdate(float _DeltaTime)
 {
+	GroundUp();
 	FVector MarioPos = GetActorLocation();
-	Color8Bit CurPosColor = UContentsHelper::MapColImage->GetColor(MarioPos.iX(), MarioPos.iY(), Color8Bit::MagentaA);
-	if (CurPosColor != Color8Bit::MagentaA && false == IsCollision)
+	Color8Bit ColorLeft = UContentsHelper::MapColImage->GetColor(MarioPos.iX() - 12, MarioPos.iY(), Color8Bit::MagentaA);
+	Color8Bit ColorRight = UContentsHelper::MapColImage->GetColor(MarioPos.iX() + 12, MarioPos.iY(), Color8Bit::MagentaA);
+	if (ColorLeft != Color8Bit::MagentaA  && ColorRight != Color8Bit::MagentaA && false == IsCollision)
 	{
 		GravityVector += FVector::Down * GravityAcc * _DeltaTime;
 	}
@@ -1103,25 +1108,20 @@ void AMario::MoveUpdate(float _DeltaTime)
 		JumpVector = FVector::Zero;
 	}
 
-	FVector CheckPos = GetActorLocation();
-	// TODO : 수정필요
-	Color8Bit ColorLeft = UContentsHelper::MapColImage->GetColor(CheckPos.iX() - 32, CheckPos.iY() - 32, Color8Bit::MagentaA);
-	Color8Bit ColorRight = UContentsHelper::MapColImage->GetColor(CheckPos.iX() + 32, CheckPos.iY() - 32, Color8Bit::MagentaA);
-	float CamerPos = GetWorld()->GetCameraPos().X;
-	//if (ColorLeft == Color8Bit(255, 0, 255, 0) || ColorRight == Color8Bit(255, 0, 255, 0) || CheckPos.X <= CamerPos)
-	//{
-	//	MoveVector = FVector::Zero;
-	//}
-
-	FVector CurPos = GetActorLocation();
 	FVector CurCameraPos = GetWorld()->GetCameraPos();
-	FVector NextMarioPos = CurPos + (MoveVector * _DeltaTime);
+	FVector NextMarioPos = MarioPos + (MoveVector * _DeltaTime);
 	float Center = GEngine->MainWindow.GetWindowScale().hX();
 	float ScaleX = GEngine->MainWindow.GetWindowScale().X;
 	if (false == IsHiddenStage && CurCameraPos.X + Center < NextMarioPos.X && CurCameraPos.X + ScaleX <= UContentsHelper::MapColImage->GetScale().X)
 	{
 		GetWorld()->AddCameraPos(MoveVector * _DeltaTime);
 	}
+	if (CurCameraPos.X + 20.0f >= NextMarioPos.X)
+	{
+		MoveVector = FVector::Zero;
+	}
+
+	WallUp();
 
 	TotalForceVector = MoveVector + JumpVector + GravityVector;
 	AddActorLocation(TotalForceVector * _DeltaTime);
@@ -1135,8 +1135,9 @@ void AMario::GroundUp()
 		{
 			FVector Location = GetActorLocation();
 			Location.Y -= 1.0f;
-			Color8Bit Color = UContentsHelper::MapColImage->GetColor(Location.iX(), Location.iY(), Color8Bit::MagentaA);
-			if (Color == Color8Bit(255, 0, 255, 0))
+			Color8Bit ColorLeft = UContentsHelper::MapColImage->GetColor(Location.iX() - 12, Location.iY(), Color8Bit::MagentaA);
+			Color8Bit ColorRight = UContentsHelper::MapColImage->GetColor(Location.iX() + 12, Location.iY(), Color8Bit::MagentaA);
+			if (ColorLeft == Color8Bit(255, 0, 255, 0) || ColorRight == Color8Bit(255, 0, 255, 0))
 			{
 				AddActorLocation(FVector::Up);
 			}
@@ -1146,5 +1147,25 @@ void AMario::GroundUp()
 			}
 		}
 	}
+}
+
+void AMario::WallUp()
+{
+		FVector CheckPos = GetActorLocation();
+		Color8Bit ColorBottomLeft = UContentsHelper::MapColImage->GetColor(CheckPos.iX() - 16, CheckPos.iY() - 5, Color8Bit::MagentaA);
+		Color8Bit ColorTopLeft = UContentsHelper::MapColImage->GetColor(CheckPos.iX() - 16, CheckPos.iY() - 30, Color8Bit::MagentaA);
+		Color8Bit ColorBottomRight = UContentsHelper::MapColImage->GetColor(CheckPos.iX() + 16, CheckPos.iY() - 5, Color8Bit::MagentaA);
+		Color8Bit ColorTopRight = UContentsHelper::MapColImage->GetColor(CheckPos.iX() + 16, CheckPos.iY() - 30, Color8Bit::MagentaA);
+		float CamerPos = GetWorld()->GetCameraPos().X;
+		if (ColorBottomLeft == Color8Bit(255, 0, 255, 0) || ColorTopLeft == Color8Bit(255, 0, 255, 0))
+		{
+			AddActorLocation(FVector::Right);
+			MoveVector = FVector::Zero;
+		}
+		else if (ColorBottomRight == Color8Bit(255, 0, 255, 0) || ColorTopRight == Color8Bit(255, 0, 255, 0))
+		{
+			AddActorLocation(FVector::Left);
+			MoveVector = FVector::Zero;
+		}
 }
 
