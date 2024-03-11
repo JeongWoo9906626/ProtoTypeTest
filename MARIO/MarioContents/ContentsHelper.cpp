@@ -2,7 +2,7 @@
 #include "Mario.h"
 
 UWindowImage* UContentsHelper::MapColImage = nullptr;
-EMarioSizeState UContentsHelper::MSizeState = EMarioSizeState::Small;
+EMarioSizeState UContentsHelper::MSizeState = EMarioSizeState::Big;
 std::string UContentsHelper::MapName = "";
 int UContentsHelper::CoinCount = 100;
 int UContentsHelper::Score = 1000000;

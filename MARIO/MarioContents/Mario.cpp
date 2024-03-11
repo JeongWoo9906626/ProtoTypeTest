@@ -762,14 +762,14 @@ void AMario::FreeMove(float _DeltaTime)
 
 void AMario::Idle(float _DeltaTime)
 {
-	if (true == IsInvincibility)
+	if (true == IsInvincibility && false == IsChange)
 	{
 		BodyCollision->SetActive(false);
 		HeadCollision->SetActive(false);
 		BottomCollision->SetActive(false);
 		Renderer->SetAlpha(0.5f);
 	}
-	else
+	if (false == IsInvincibility && false == IsChange)
 	{
 		BodyCollision->SetActive(true);
 		HeadCollision->SetActive(true);
