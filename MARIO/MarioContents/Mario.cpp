@@ -198,13 +198,10 @@ void AMario::Tick(float _DeltaTime)
 
 		SetActorLocation({ MarioBottomCollisionPos.X, BoxCollisionPos.Y - 3.0f });
 
-		IsJump = false;
 		IsCollision = true;
-		IsGround = true;
 	}
 	else
 	{
-		IsGround = false;
 		IsCollision = false;
 	}
 
@@ -231,6 +228,9 @@ void AMario::StateChange(EPlayState _State)
 			break;
 		case EPlayState::Crouch:
 			CrouchStart();
+			break;
+		case EPlayState::CrouchMove:
+			CrouchMoveStart();
 			break;
 		case EPlayState::Reverse:
 			ReverseStart();
@@ -295,6 +295,9 @@ void AMario::StateUpdate(float _DeltaTime)
 		break;
 	case EPlayState::Crouch:
 		Crouch(_DeltaTime);
+		break;
+	case EPlayState::CrouchMove:
+		CrouchMove(_DeltaTime);
 		break;
 	case EPlayState::Reverse:
 		Reverse(_DeltaTime);
@@ -494,6 +497,12 @@ void AMario::CrouchStart()
 	BodyCollision->SetScale({ 50, 80 });
 	HeadCollision->SetPosition({ 0, -82 });
 	HeadCollision->SetScale({ 10, 10 });
+	Renderer->ChangeAnimation(GetAnimationName("Crouch"));
+}
+
+void AMario::CrouchMoveStart()
+{
+	DirCheck();
 	Renderer->ChangeAnimation(GetAnimationName("Crouch"));
 }
 
@@ -860,6 +869,12 @@ void AMario::Move(float _DeltaTime)
 {
 	GroundUp();
 	
+	if (abs(MoveVector.X) > 10.0f && true == UEngineInput::IsDown(VK_DOWN))
+	{
+		StateChange(EPlayState::CrouchMove);
+		return;
+	}
+
 	if (true == UEngineInput::IsDown(VK_SPACE))
 	{
 		StateChange(EPlayState::Jump);
@@ -956,12 +971,12 @@ void AMario::Jump(float _DeltaTime)
 		{
 			if (false == IsDown)
 			{
-				if (DirState == EActorDir::Left && MoveVector.X > 0.0f)
+				if (true == UEngineInput::IsFree(VK_RIGHT) && DirState == EActorDir::Left && MoveVector.X > 0.0f)
 				{
 					StateChange(EPlayState::Reverse);
 					return;
 				}
-				if (DirState == EActorDir::Right && MoveVector.X < 0.0f)
+				if (true == UEngineInput::IsFree(VK_LEFT) && DirState == EActorDir::Right && MoveVector.X < 0.0f)
 				{
 					StateChange(EPlayState::Reverse);
 					return;
@@ -1035,6 +1050,45 @@ void AMario::Crouch(float _DeltaTime)
 		IsMove = true;
 		StateChange(EPlayState::Idle);
 		return;
+	}
+}
+
+void AMario::CrouchMove(float _DeltaTime)
+{
+	if (true == UEngineInput::IsUp(VK_DOWN))
+	{
+		StateChange(EPlayState::Move);
+		return;
+	}
+
+	if (
+		(true == UEngineInput::IsFree(VK_RIGHT) && true == UEngineInput::IsFree(VK_LEFT)) ||
+		(true == UEngineInput::IsPress(VK_RIGHT) && true == UEngineInput::IsPress(VK_LEFT))
+		)
+	{
+		FVector MoveDirVector = FVector::Zero;
+		switch (DirState)
+		{
+		case EActorDir::Left:
+			MoveDirVector = FVector::Right;
+			break;
+		case EActorDir::Right:
+			MoveDirVector = FVector::Left;
+			break;
+		}
+
+		if (abs(MoveVector.X) > 5.0f)
+		{
+			MoveVector += MoveDirVector * BreakSpeed * _DeltaTime;
+			MoveUpdate(_DeltaTime);
+			return;
+		}
+		else
+		{
+			MoveVector = FVector::Zero;
+			StateChange(EPlayState::Crouch);
+			return;
+		}
 	}
 }
 

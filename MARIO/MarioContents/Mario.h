@@ -61,6 +61,7 @@ protected:
 	void MoveStart();
 	void JumpStart();
 	void CrouchStart();
+	void CrouchMoveStart();
 	void ReverseStart();
 	void KillStart();
 	void DieStart();
@@ -80,6 +81,7 @@ protected:
 	void Move(float _DeltaTime);
 	void Jump(float _DeltaTime);
 	void Crouch(float _DeltaTime);
+	void CrouchMove(float _DeltaTime);
 	void Reverse(float _DeltaTime);
 	void Kill(float _DeltaTime);
 	void Die(float _DeltaTime);
@@ -107,7 +109,6 @@ private:
 
 	bool IsHiddenStage = false;
 	bool IsChange = false;
-	bool IsJump = false;
 	bool IsGround = false;
 	bool IsDown = false;
 	bool IsMove = true;
