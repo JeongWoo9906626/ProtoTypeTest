@@ -334,6 +334,7 @@ void AMario::DirCheck()
 		)
 	{
 		DirState = EActorDir::Right;
+		return;
 	}
 	if (
 			true == UEngineInput::IsPress(VK_LEFT) && true == UEngineInput::IsUp(VK_RIGHT) ||
@@ -341,6 +342,7 @@ void AMario::DirCheck()
 		)
 	{
 		DirState = EActorDir::Left;
+		return;
 	}
 }
 
@@ -849,6 +851,17 @@ void AMario::Jump(float _DeltaTime)
 		}
 		else
 		{
+			// 왼쪽 보면서 오른쪽 누르다가 떼면
+			if (DirState == EActorDir::Left && MoveVector.X > 0.0f)
+			{
+				StateChange(EPlayState::Reverse);
+				return;
+			}
+			if (DirState == EActorDir::Right && MoveVector.X < 0.0f)
+			{
+				StateChange(EPlayState::Reverse);
+				return;
+			}
 			StateChange(EPlayState::Move);
 			return;
 		}
