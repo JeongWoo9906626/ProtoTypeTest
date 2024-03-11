@@ -128,8 +128,9 @@ private:
 	float GravityAcc = 600.0f;
 
 	FVector JumpVector = FVector::Zero;
+	float JumpForce = 0.0f;
 	float JumpPower = 560.0f;
-	float KillJumpPower = 200.0f;
+	float KillJumpPower = 250.0f;
 	float DieJumpPower = 100.0f;
 
 	FVector TotalForceVector = FVector::Zero;

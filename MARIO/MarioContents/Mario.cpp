@@ -118,7 +118,7 @@ void AMario::BeginPlay()
 		HeadCollision = CreateCollision(ECollisionOrder::PlayerHead);
 		HeadCollision->SetColType(ECollisionType::Rect);
 		HeadCollision->SetPosition({ 0, -62 });
-		HeadCollision->SetScale({ 40, 10 });
+		HeadCollision->SetScale({ 10, 10 });
 	}
 
 	{
@@ -477,9 +477,10 @@ void AMario::MoveStart()
 void AMario::JumpStart()
 {
 	IsGround = false;
+	JumpForce = JumpPower;
 	DirCheck();
 	AddActorLocation(FVector::Up * 5);
-	JumpVector = FVector::Up * JumpPower;
+	JumpVector = FVector::Up * JumpForce;
 	if (true == IsDown)
 	{
 		Renderer->ChangeAnimation(GetAnimationName("Crouch"));
@@ -516,7 +517,8 @@ void AMario::KillStart()
 {
 	DirCheck();
 	GravityVector = FVector::Zero;
-	JumpVector = FVector::Up * KillJumpPower;
+	JumpForce = KillJumpPower;
+	JumpVector = FVector::Up * JumpForce;
 	Renderer->ChangeAnimation(GetAnimationName("Jump"));
 }
 
@@ -1123,30 +1125,8 @@ void AMario::Reverse(float _DeltaTime)
 void AMario::Kill(float _DeltaTime)
 {
 	MoveUpdate(_DeltaTime);
-
-	if (JumpVector.Y == 0.0f && GravityVector.Y == 0.0f)
-	{
-		if (MoveVector.X == 0.0f)
-		{
-			StateChange(EPlayState::Idle);
-			return;
-		}
-		else
-		{
-			StateChange(EPlayState::Move);
-			return;
-		}
-	}
-
-	if (true == UEngineInput::IsPress(VK_RIGHT))
-	{
-		MoveVector += FVector::Right * MoveAcc * 0.5f * _DeltaTime;
-	}
-
-	if (true == UEngineInput::IsPress(VK_LEFT))
-	{
-		MoveVector += FVector::Left * MoveAcc * 0.5f * _DeltaTime;
-	}
+	State = EPlayState::Jump;
+	return;
 }
 
 void AMario::Die(float _DeltaTime)
