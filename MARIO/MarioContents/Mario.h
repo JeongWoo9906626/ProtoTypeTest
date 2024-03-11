@@ -122,7 +122,7 @@ private:
 
 	FVector JumpVector = FVector::Zero;
 	float JumpPower = 560.0f;
-	float KillJumpPower = 300.0f;
+	float KillJumpPower = 200.0f;
 	float DieJumpPower = 100.0f;
 
 	FVector TotalForceVector = FVector::Zero;
